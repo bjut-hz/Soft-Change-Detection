@@ -42,8 +42,9 @@ end
 
 
 %initialization
-
+%avoid the sigular Csigma
 for i = 1:Nclusters
+   Csigmalist{i} = addvariance( Csigmalist{i}, sigma ); 
    Csigmainvlist{i} = inv( Csigmalist{i} ); 
 end
 
