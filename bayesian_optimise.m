@@ -56,6 +56,8 @@ likelihoodbest = -9999999999;
 %Optimization loop
 
 for i = 1:Nclusters
+    
+   likelihoodvaluepre = likelihoodbest;
    alpha = alphaavg;
    alphaprev = alpha;
    Cmean = Cmeanlist{i};
@@ -70,18 +72,25 @@ for i = 1:Nclusters
        
        alpha = dot( ( xt2 - xt1 )', ( c - xt1 )) / ( sum( ( c - xt1 ).^2 ));
        
-       if( (abs(alphaprev-alpha)<.001 && loopcount>3) || loopcount>20 )
+       likelihoodlvalue = likelihood( xt1, xt2, c, alpha, sigma, Cmean, Csigmainv );
+       if( likelihoodlvalue > likelihoodbest )
+           cbest = c;
+           alphabest = alpha;
+           likelihoodbest = likelihoodlvalue;     
+       end
+       
+       if( (abs(alphaprev-alpha)<.001 && loopcount>3) || ( abs( likelihoodvaluepre - likelihoodlvalue ) < .001  && loopcount > 3) || loopcount>20  )
            satisfied = true;
        end
        alphaprev = alpha;
        loopcount = loopcount + 1;
    end
-   likelihoodlvalue = likelihood( xt1, xt2, c, alpha, sigma, Cmean, Csigmainv );
-   if( likelihoodlvalue > likelihoodbest )
-       cbest = c;
-       alphabest = alpha;
-       likelihoodbest = likelihoodlvalue;     
-   end
+%    likelihoodlvalue = likelihood( xt1, xt2, c, alpha, sigma, Cmean, Csigmainv );
+%    if( likelihoodlvalue > likelihoodbest )
+%        cbest = c;
+%        alphabest = alpha;
+%        likelihoodbest = likelihoodlvalue;     
+%    end
 end
 
 c = cbest;
